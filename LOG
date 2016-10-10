@@ -253,3 +253,72 @@
   concurrently. Updated $yield and $thread-check in mats/thread.ms to
   be more tolerant of timing variability.
     c/types.h, mats/thread.ms, release_notes.stex
+- fixed three instances of unchecked mallocs reported by laqrix in
+  github issue #77.
+    io.c, schlib.c, thread.c
+- continue the profiler's html output refresh: refine the styling
+  (and palette) and update CSUG to match. update the CSUG screenshots
+  to reflect the refined look.
+    s/pdhtml.ss
+    csug/system.stex 
+    csug/canned/profilehtml-orig.png
+    csug/canned/profilehtml.png
+    csug/canned/fatfibhtml-orig.png
+    csug/canned/fatfibhtml.png
+- add unicode support to the expression editor.  entry and display now work
+  except that combining characters are not treated correctly for
+  line-wrapping.  this addresses github issue #32 and part of issue #81.
+    c/expeditor.c, s/expeditor.ss
+- moved s_ee_write_char function within the WIN32 check to allow the unicode
+  change to compile on windows.  unicode is not yet supported in the windows
+  version of the repl.
+    c/expeditor.c
+- reworked the S_create_thread_object to print an error and exit when
+  allocating the thread context fails from Sactivate_thread.  before
+  this change, the error was raised on the main thread, which resulted
+  in strange behavior at best.  also added who argument to
+  S_create_thread_object to allow it to report either Sactivate_thread
+  or fork-thread led to the error.
+    externs.h, schsig.c, scheme.c, thread.c
+- fixed a bug in cpvalid resulting in it leaving behind a cpvalid-defer
+  form for later passes to choke on.  also fixed cp0 to print the correct
+  name for cpvalid when it does this.
+    cpvalid.ss, cp0.ss,
+    misc.ms
+- updated the prototype for s_ee_write_char to match the definition
+    expeditor.c
+- fixed a side-effect preservation bug with non-trivial test-context
+  not-like patterns.
+    cp0.ss,
+    cp0.ms, 4.ms
+- instead of default-exception handler, new-cafe establishes a handler
+  that calls the current value of base-exception-handler so the handler
+  can be overridden, as we do in our own make files.
+    cafe.ss,
+    7.ms
+- fixed a bug in case and exclusive-cond syntax-error calls causing an
+  exception in syntax-error instead of the intended error message.
+    syntax.ss
+- added tests for the case and exclusive-cond syntax-error calls
+    4.ms, root-experr-compile-0-f-f-f
+- added print-extended-identifiers parameter.  when #t, symbols like
+  1+ and +++ print without escapes.
+    priminfo.ss, print.ss,
+    6.ms
+- added descriptions of print-extended-identifiers to the user's guide
+  and release notes.  updated the release notes to account for a couple
+  of other log entries.
+    release_notes.stex,
+    intro.stex, io.stex
+- updated the sockets example to work with the current version of Chez.
+  Change the foreign procedure definitions to use the more portable int
+  rather than integer-32.  Switch to a custom port
+  [make-custom-binary-input/output-port] rather than a generic port
+  [make-input/output-port], which resulted in deleting quite a bit of
+  code.  Fix various compiler warnings in the C code, and along the way,
+  fix a signedness bug in c_write that could have resulted in not writing
+  the full buffer (but reporting that it did) in the case of errors from
+  write.
+    examples/csocket.c, examples/socket.ss
+- use high-precision clock time on Windows 8 and up
+    c/stats.c

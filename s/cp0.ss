@@ -747,9 +747,8 @@
                       (cond
                         [(and d12 d13) (make-seq ctxt (make-if 'effect sc e11 e12 e13) e2)]
                         [(not (or d12 d13)) (make-seq ctxt (make-if 'effect sc e11 e12 e13) e3)]
-                        [else (let ([e2 (non-result-exp e12 e2)] [e3 (non-result-exp e13 e3)])
-                                (let-values ([(e2 e3) (if d12 (values e2 e3) (values e3 e2))])
-                                  (make-if ctxt sc e11 e2 e3)))])))
+                        [else (let-values ([(e2 e3) (if d12 (values e2 e3) (values e3 e2))])
+                                (make-if ctxt sc e11 (non-result-exp e12 e2) (non-result-exp e13 e3)))])))
                   #f)]
              [else #f])]
           [else
@@ -4635,7 +4634,7 @@
                        [else #f])))]
              [else (void)])))
        `(cte-optimization-loc ,box ,e)]
-      [(cpvalid-defer ,e) (sorry! who "np-valid leaked a cpvalid-defer form ~s" ir)]
+      [(cpvalid-defer ,e) (sorry! who "cpvalid leaked a cpvalid-defer form ~s" ir)]
       [(profile ,src) ir]
       [else ($oops who "unrecognized record ~s" ir)])
     (begin
